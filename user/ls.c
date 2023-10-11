@@ -4,6 +4,7 @@
 #include "kernel/fs.h"
 #include "kernel/fcntl.h"
 
+// Return format file name
 char*
 fmtname(char *path)
 {
