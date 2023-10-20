@@ -1,3 +1,13 @@
+/**
+ * @file vm.c
+ * @brief Functions starting with kvm maintain the kernel's page table.
+ * Functions starting with uvm maintain the user's page table.
+ * @version 1.0
+ * @date 2023-10-20
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #include "param.h"
 #include "types.h"
 #include "memlayout.h"
@@ -9,7 +19,7 @@
 /*
  * the kernel's page table.
  */
-pagetable_t kernel_pagetable;
+pagetable_t kernel_pagetable;   // A pointer to a RISC-V root page table
 
 extern char etext[];  // kernel.ld sets this to end of kernel code.
 
@@ -21,6 +31,7 @@ kvmmake(void)
 {
   pagetable_t kpgtbl;
 
+  // allocate a page of physical memory to hold the top-level page table.
   kpgtbl = (pagetable_t) kalloc();
   memset(kpgtbl, 0, PGSIZE);
 
@@ -50,6 +61,8 @@ kvmmake(void)
 }
 
 // Initialize the one kernel_pagetable
+// this call occurs before xv6 has enabled paging on RISC-V
+// so addresses refer directly to physical memory
 void
 kvminit(void)
 {
@@ -67,12 +80,14 @@ kvminithart()
   w_satp(MAKE_SATP(kernel_pagetable));
 
   // flush stale entries from the TLB.
+  // xv6 has to flush the complete TLB every time(it doesn't support address
+  // space identifiers)
   sfence_vma();
 }
 
 // Return the address of the PTE in page table pagetable
 // that corresponds to virtual address va.  If alloc!=0,
-// create any required page-table pages.
+// create any required page-table pages and put PPN in the PTE
 //
 // The risc-v Sv39 scheme has three levels of page-table
 // pages. A page-table page contains 512 64-bit PTEs.
@@ -99,6 +114,7 @@ walk(pagetable_t pagetable, uint64 va, int alloc)
       *pte = PA2PTE(pagetable) | PTE_V;
     }
   }
+  // Return the pointer to the PTE for a given virtual address
   return &pagetable[PX(0, va)];
 }
 
