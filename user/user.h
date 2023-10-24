@@ -39,3 +39,7 @@ void free(void*);
 int atoi(const char*);
 int memcmp(const void *, const void *, uint);
 void *memcpy(void *, const void *, uint);
+// trace command in `trace.c` shows that `trace` syscall may cause an error
+// `trace` syscall accept an integer mask, whose bits specify which syscalls to trace
+//  as the only argument
+int trace(int);

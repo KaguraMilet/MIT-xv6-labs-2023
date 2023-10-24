@@ -1,4 +1,5 @@
 // System call numbers
+// As an index for kernel to find syscall handler in Interrupt vector table
 #define SYS_fork    1
 #define SYS_exit    2
 #define SYS_wait    3
@@ -20,3 +21,4 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
+#define SYS_trace  22
