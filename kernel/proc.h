@@ -41,11 +41,13 @@ extern struct cpu cpus[NCPU];
 // return-to-user path via usertrapret() doesn't return through
 // the entire kernel call stack.
 struct trapframe {
+  // trapframe store all general purpose registers when a syscall happen
+  // virtual address of trapframe page stored in register `sscratch`
   /*   0 */ uint64 kernel_satp;   // kernel page table
   /*   8 */ uint64 kernel_sp;     // top of process's kernel stack
   /*  16 */ uint64 kernel_trap;   // usertrap()
   /*  24 */ uint64 epc;           // saved user program counter
-  /*  32 */ uint64 kernel_hartid; // saved kernel tp
+  /*  32 */ uint64 kernel_hartid; // saved kernel tp(index of processor, shows that current process execute on which processor)
   /*  40 */ uint64 ra;
   /*  48 */ uint64 sp;
   /*  56 */ uint64 gp;
@@ -91,6 +93,7 @@ struct proc {
   int killed;                  // If non-zero, have been killed
   int xstate;                  // Exit status to be returned to parent's wait
   int pid;                     // Process ID
+  int tracemask;               // Trace mask
 
   // wait_lock must be held when using this:
   struct proc *parent;         // Parent process

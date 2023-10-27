@@ -50,6 +50,7 @@ usertrap(void)
   // save user program counter.
   p->trapframe->epc = r_sepc();
   
+  // register sscause store the reason that why we are in `usertrap`
   if(r_scause() == 8){
     // system call
 
@@ -135,6 +136,7 @@ void
 kerneltrap()
 {
   int which_dev = 0;
+  // Store PC and previous mode because of `yield()`
   uint64 sepc = r_sepc();
   uint64 sstatus = r_sstatus();
   uint64 scause = r_scause();
@@ -144,9 +146,11 @@ kerneltrap()
   if(intr_get() != 0)
     panic("kerneltrap: interrupts enabled");
 
+  // Check which kind of trap: device interrupts and exceptions
   if((which_dev = devintr()) == 0){
     printf("scause %p\n", scause);
     printf("sepc=%p stval=%p\n", r_sepc(), r_stval());
+    // trap caused by an exception, always a fatal error
     panic("kerneltrap");
   }
 

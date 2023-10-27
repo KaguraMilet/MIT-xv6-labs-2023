@@ -91,3 +91,14 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+// Store the traced syscall number in PCB
+uint64
+sys_trace(void)
+{
+  int tracemask;
+  argint(0, &tracemask);
+  struct proc* p = myproc();
+  p->tracemask = tracemask;
+  return 0;
+}

@@ -1,6 +1,7 @@
         #
         # interrupts and exceptions while in supervisor
         # mode come here.
+        # traps from kernel space
         #
         # the current stack is a kernel stack.
         # push all registers, call kerneltrap().

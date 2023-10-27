@@ -281,7 +281,7 @@ fork(void)
 {
   int i, pid;
   struct proc *np;
-  struct proc *p = myproc();
+  struct proc *p = myproc();  // Current process metadata
 
   // Allocate process.
   if((np = allocproc()) == 0){
@@ -301,6 +301,9 @@ fork(void)
 
   // Cause fork to return 0 in the child.
   np->trapframe->a0 = 0;
+
+  // Copy the traced syscall number in executed process
+  np->tracemask = p->tracemask;
 
   // increment reference counts on open file descriptors.
   for(i = 0; i < NOFILE; i++)
