@@ -1,4 +1,5 @@
 struct stat;
+struct sysinfo;
 
 // system calls
 int fork(void);
@@ -26,6 +27,8 @@ int uptime(void);
 // `trace` syscall accept an integer mask, whose bits specify which syscalls to trace
 //  as the only argument
 int trace(int);
+// Collect information about the running process
+int sysinfo(struct sysinfo*);
 
 // ulib.c
 int stat(const char*, struct stat*);
