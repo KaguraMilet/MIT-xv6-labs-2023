@@ -5,6 +5,7 @@
 #include "memlayout.h"
 #include "spinlock.h"
 #include "proc.h"
+#include "sysinfo.h"
 
 uint64
 sys_exit(void)
@@ -100,5 +101,23 @@ sys_trace(void)
   argint(0, &tracemask);
   struct proc* p = myproc();
   p->tracemask = tracemask;
+  return 0;
+}
+
+// Get the information about the running system
+uint64
+sys_info(void)
+{
+  struct sysinfo info;
+  struct proc* p = myproc();  // Get current process PCB
+  uint64 p_info;  // user pointer to struct sysinfo
+  argaddr(0, &p_info);  // Get syscall argument from trap frame as a pointer
+  
+  info.freemem = kspace();
+  info.nproc = process_num();
+
+  if(copyout(p->pagetable, p_info, (char*)&info, sizeof(struct sysinfo)) < 0)
+    return -1;
+
   return 0;
 }
